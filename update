@@ -1,0 +1,14 @@
+#!/bin/sh
+# Rebuild the hard-coded song list. Run from this folder.
+#   ./update
+#   ./update PLxxxxxxxx
+#   ./update --add "Name" PLxxxxxxxx
+cd "$(dirname "$0")" || exit 1
+if command -v python3 >/dev/null 2>&1; then
+  exec python3 update-builtin.py "$@"
+fi
+if command -v python >/dev/null 2>&1; then
+  exec python update-builtin.py "$@"
+fi
+echo "python3 not found"
+exit 1
