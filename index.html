@@ -332,6 +332,11 @@ function rememberBlockedId(id) {
   b[id] = 1;
   try { localStorage.setItem(STORE_BLOCKED, JSON.stringify(b)); } catch (e) {}
 }
+function markNotHere(id) {
+  SONGS.forEach(function(s) { if (s.id === id) s.e = 0; });
+  if (BUILTIN_BY_ID[id]) BUILTIN_BY_ID[id].e = 0;
+  rememberBlockedId(id);
+}
 function applyBlockedFlags(songs) {
   var b = loadBlockedIds();
   songs.forEach(function(s) { if (b[s.id]) s.e = 0; });
@@ -395,6 +400,7 @@ function applySongs(songs, label, plid, name) {
 function filtered() {
   var query = q.value;
   var searching = tokens(query).length > 0;
+  applyBlockedFlags(SONGS);
   var rows = SONGS.filter(function(s) {
     if (isJunkSong(s)) return false;
     if (!matches(s, query)) return false;
@@ -489,8 +495,7 @@ function playHere(song) {
           if (ev.data === 0 && !oneTrack) setTimeout(playNextHere, 50);
         },
         onError: function() {
-          song.e = 0;
-          rememberBlockedId(song.id);
+          markNotHere(song.id);
           persistCurrent();
           render();
           if (!oneTrack) {
