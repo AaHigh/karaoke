@@ -32,12 +32,119 @@ HOSTS = [
 ]
 
 
+ID_RE = re.compile(r"^[A-Za-z0-9_-]{11}$")
+KEEP_BOTH_FILE = "keep-both.json"
+
+
 def fmt_dur(sec) -> str:
     try:
         sec = int(sec or 0)
     except (TypeError, ValueError):
         return ""
     return f"{sec // 60}:{sec % 60:02d}"
+
+
+def parse_seconds(text) -> int:
+    if isinstance(text, (int, float)):
+        return int(text)
+    s = str(text or "").strip()
+    if not s:
+        return 0
+    parts = s.split(":")
+    try:
+        parts = [int(p) for p in parts]
+    except ValueError:
+        return 0
+    if len(parts) == 3:
+        return parts[0] * 3600 + parts[1] * 60 + parts[2]
+    if len(parts) == 2:
+        return parts[0] * 60 + parts[1]
+    return parts[0]
+
+
+def is_junk(vid: str, title: str, author: str, seconds: int) -> bool:
+    title = (title or "").strip()
+    author = (author or "").strip()
+    if not vid:
+        return True
+    if not title:
+        return True
+    if title == vid:
+        return True
+    if ID_RE.match(title) and not author:
+        return True
+    if seconds <= 0 and (not author or title == vid):
+        return True
+    if seconds <= 0 and ID_RE.match(title):
+        return True
+    return False
+
+
+def clean_song_bits(title: str) -> tuple[str, str]:
+    raw = re.sub(r"\s+", " ", title or "").strip()
+    t = re.sub(
+        r"(?i)\s*[\(\[][^)\]]*(karaoke|instrumental|lyrics|official|version|hd)[^)\]]*[\)\]]",
+        " ",
+        raw,
+    )
+    t = re.sub(r"(?i)\s*[-–—|•·]+\s*(karaoke|instrumental).*$", " ", t)
+    t = re.sub(r"\s+", " ", t).strip(" -–—|•·")
+    artist = ""
+    song = t
+    for sep in [" - ", " – ", " — ", " • ", " · ", " | "]:
+        if sep in t:
+            left, right = t.split(sep, 1)
+            if len(left) <= 40:
+                artist, song = left.strip(), right.strip()
+            break
+    return artist, song
+
+
+def load_keep_both(here: Path) -> set[tuple[str, str]]:
+    path = here / KEEP_BOTH_FILE
+    if not path.exists():
+        return set()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return set()
+    pairs = set()
+    for row in data.get("pairs") or []:
+        ids = row.get("ids") or []
+        if len(ids) >= 2:
+            a, b = sorted(ids[:2])
+            pairs.add((a, b))
+    return pairs
+
+
+def report_duplicates(here: Path, songs: list[dict]) -> None:
+    kept = load_keep_both(here)
+    buckets = {}
+    for song in songs:
+        artist, name = clean_song_bits(song.get("t") or "")
+        key = re.sub(r"[^a-z0-9]+", " ", (name or song.get("t") or "").lower()).strip()
+        if len(key) < 4:
+            continue
+        buckets.setdefault(key, []).append(song)
+    print("--- possible duplicate songs ---")
+    found = 0
+    for key, rows in buckets.items():
+        if len(rows) < 2:
+            continue
+        found += 1
+        secs = [parse_seconds(s.get("d")) for s in rows]
+        close = max(secs) - min(secs) <= 20 if secs else False
+        ids = [s["id"] for s in rows]
+        pair = tuple(sorted(ids[:2]))
+        flagged = "KEEP-BOTH" if pair in kept else ("similar length" if close else "check versions")
+        print(f"* {key} [{flagged}]")
+        for song, sec in zip(rows, secs):
+            print(f"    {song['id']}  {song.get('d')}  {song.get('t')}")
+        if pair not in kept:
+            print(f"    to keep both: add {{\"ids\": {json.dumps(ids[:2])}, \"note\": \"keep both\"}} to {KEEP_BOTH_FILE}")
+    if not found:
+        print("none")
+    print("---")
 
 
 def fetch_page(host: str, plid: str, page: int) -> dict:
@@ -66,13 +173,24 @@ def fetch_playlist(plid: str) -> tuple[str, list[dict]]:
                     vid = item.get("videoId")
                     if not vid or vid in seen:
                         continue
+                    title_text = item.get("title") or ""
+                    author = item.get("author") or ""
+                    seconds = item.get("lengthSeconds") or 0
+                    try:
+                        seconds = int(seconds)
+                    except (TypeError, ValueError):
+                        seconds = 0
+                    if is_junk(vid, title_text, author, seconds):
+                        print(f"cull {vid} ({title_text or 'no title'})")
+                        seen.add(vid)
+                        continue
                     seen.add(vid)
                     songs.append(
                         {
                             "id": vid,
-                            "t": item.get("title") or vid,
-                            "c": item.get("author") or "",
-                            "d": fmt_dur(item.get("lengthSeconds")),
+                            "t": title_text or vid,
+                            "c": author,
+                            "d": fmt_dur(seconds),
                             "g": (item.get("description") or "")[:800],
                         }
                     )
@@ -202,6 +320,7 @@ def main() -> None:
     print(f"wrote {len(out)} songs into {html_path}")
     print(f"playlist: {title} ({plid})")
     print(f"play-here flags kept or set: {here_n}")
+    report_duplicates(here, out)
     print("open the new index.html. no Grok step.")
 
 
