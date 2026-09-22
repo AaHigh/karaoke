@@ -196,6 +196,7 @@ const PLAYLISTS = [{"id":"PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7","name":"AAHIGH Kar
 const STORE = 'aahighKaraoke.v3';
 const STORE_SAVED = 'aahighKaraoke.savedPlaylists';
 const STORE_DEFAULT = 'aahighKaraoke.default';
+const STORE_BLOCKED = 'aahighKaraoke.blockedIds';
 const HOSTS = [
   'https://invidious.f5.si',
   'https://invidious.nerdvpn.de',
@@ -454,6 +455,21 @@ function loadStored() {
     return data;
   } catch (e) { return null; }
 }
+
+function loadBlockedIds() {
+  try { return JSON.parse(localStorage.getItem(STORE_BLOCKED) || '{}'); } catch (e) { return {}; }
+}
+function rememberBlockedId(id) {
+  const b = loadBlockedIds();
+  b[id] = 1;
+  try { localStorage.setItem(STORE_BLOCKED, JSON.stringify(b)); } catch (e) {}
+}
+function applyBlockedFlags(songs) {
+  const b = loadBlockedIds();
+  songs.forEach(s => { if (b[s.id]) s.e = 0; });
+  return songs;
+}
+
 function loadDefault() {
   try { return JSON.parse(localStorage.getItem(STORE_DEFAULT) || 'null'); } catch (e) { return null; }
 }
@@ -496,7 +512,7 @@ function renderPicks() {
 }
 function applySongs(songs, label, plid, name) {
   closePlayer();
-  SONGS = songs.filter(s => !isJunkSong(s)).map((s, i) => Object.assign({}, s, { _i: i }));
+  SONGS = applyBlockedFlags(songs.filter(s => !isJunkSong(s)).map((s, i) => Object.assign({}, s, { _i: i })));
   sourceLabel = label;
   if (plid) currentPlid = plid;
   if (name) currentName = name;
@@ -557,6 +573,7 @@ function playHere(song) {
       events: {
         onError: function() {
           song.e = 0;
+          rememberBlockedId(song.id);
           persistCurrent();
           render();
           showYtOnly(song);
@@ -723,11 +740,13 @@ if (window.visualViewport) window.visualViewport.addEventListener('resize', sync
     currentPlid = def.plid || DEFAULT_PLAYLIST;
     currentName = def.name || 'Saved playlist';
     sourceLabel = currentName + ' · ' + SONGS.length + ' songs';
+    SONGS = applyBlockedFlags(SONGS);
     setStatus('Defaulting to ' + currentName + ' instead of AAHIGH.');
   } else {
     currentPlid = DEFAULT_PLAYLIST;
     currentName = HOME_NAME;
     sourceLabel = 'Built-in AAHIGH list';
+    SONGS = applyBlockedFlags(BUILTIN.map(copySong));
   }
   renderPicks();
   render();
