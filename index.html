@@ -221,32 +221,45 @@ async function readClipboard() {
   } catch (e) {}
   return '';
 }
+function songFromVideo(v) {
+  const id = v.videoId;
+  const b = BUILTIN_BY_ID[id];
+  return {
+    id: id,
+    t: v.title || (b && b.t) || id,
+    c: v.author || (b && b.c) || '',
+    d: v.lengthSeconds != null ? fmtDur(v.lengthSeconds) : ((b && b.d) || ''),
+    e: knownEmbed(id),
+    g: [v.description || '', b && b.t, b && b.c, b && b.g].filter(Boolean).join(' ')
+  };
+}
 async function fetchPlaylist(plid) {
   let lastErr = 'no host';
   for (const host of HOSTS) {
-    const url = host + '/api/v1/playlists/' + plid;
     try {
-      const res = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!res.ok) { lastErr = host + ' ' + res.status; continue; }
-      const data = await res.json();
-      const raw = data.videos || [];
       const songs = [];
       const seen = {};
-      raw.forEach(v => {
-        const id = v.videoId;
-        if (!id || seen[id]) return;
-        seen[id] = 1;
-        const b = BUILTIN_BY_ID[id];
-        songs.push({
-          id: id,
-          t: v.title || (b && b.t) || id,
-          c: v.author || (b && b.c) || '',
-          d: v.lengthSeconds != null ? fmtDur(v.lengthSeconds) : ((b && b.d) || ''),
-          e: knownEmbed(id),
-          g: [v.description || '', b && b.t, b && b.c, b && b.g].filter(Boolean).join(' ')
+      let title = plid;
+      let added = 0;
+      for (let page = 1; page <= 10; page++) {
+        const url = host + '/api/v1/playlists/' + plid + '?page=' + page;
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!res.ok) { lastErr = host + ' ' + res.status; break; }
+        const data = await res.json();
+        title = data.title || title;
+        const raw = data.videos || [];
+        let fresh = 0;
+        raw.forEach(v => {
+          const id = v.videoId;
+          if (!id || seen[id]) return;
+          seen[id] = 1;
+          songs.push(songFromVideo(v));
+          fresh += 1;
         });
-      });
-      if (songs.length) return { title: data.title || plid, songs: songs };
+        added += fresh;
+        if (!raw.length || fresh === 0) break;
+      }
+      if (songs.length) return { title: title, songs: songs };
       lastErr = host + ' empty';
     } catch (e) {
       lastErr = host + ' fail';
