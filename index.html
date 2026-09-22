@@ -16,7 +16,6 @@
   --muted: #9a9aaa;
   --line: #2a2a36;
   --accent: #e8b84a;
-  --play: #ff2d2d;
   --ok: #3dd68c;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -45,7 +44,7 @@ h1 { font-size: 15px; letter-spacing: .12em; margin: 0; font-weight: 700; }
 }
 #q:focus { border-color: var(--accent); }
 .filters { display: flex; gap: 8px; margin-top: 8px; }
-.filters button {
+.filters button, .tools button {
   flex: 1; font-size: 12px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--card); color: var(--ink);
   padding: 7px 8px;
@@ -53,19 +52,13 @@ h1 { font-size: 15px; letter-spacing: .12em; margin: 0; font-weight: 700; }
 .filters button.on { border-color: var(--accent); color: var(--accent); }
 .tools { display: flex; gap: 8px; margin-top: 8px; }
 .tools button {
-  flex: 1; font-size: 13px; font-weight: 650;
-  border-radius: 10px;
-  border: 1px solid var(--line); background: #22222c; color: var(--ink);
-  padding: 10px 8px;
+  font-size: 13px; font-weight: 650; border-radius: 10px;
+  background: #22222c; padding: 10px 8px;
 }
 .tools button.primary { border-color: var(--accent); color: var(--accent); }
 #count, #status { color: var(--muted); font-size: 12px; margin-top: 8px; }
 #status { min-height: 16px; }
-#stage {
-  display: none;
-  background: #000;
-  border-top: 1px solid var(--line);
-}
+#stage { display: none; background: #000; border-top: 1px solid var(--line); }
 #stage.open { display: block; }
 .stage-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .stage-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -74,70 +67,43 @@ h1 { font-size: 15px; letter-spacing: .12em; margin: 0; font-weight: 700; }
 .stage-by { color: var(--muted); font-size: 12px; margin-top: 2px; }
 .stage-actions { display: flex; gap: 14px; margin-top: 8px; }
 .stage-actions button, .stage-actions a {
-  font-size: 12px; color: var(--accent);
-  background: none; border: 0; padding: 0;
-  text-decoration: none;
+  font-size: 12px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: none;
 }
 main { padding: 10px 12px 40px; max-width: 720px; margin: 0 auto; }
 .row {
   display: flex; gap: 10px; align-items: center;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  margin-bottom: 8px;
-  padding: 8px;
-  width: 100%;
-  text-align: left;
-  color: inherit;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; margin-bottom: 8px; padding: 8px;
+  width: 100%; text-align: left; color: inherit;
 }
 .row.now { outline: 2px solid var(--accent); }
-.thumb {
-  width: 96px; height: 54px; border-radius: 8px; object-fit: cover;
-  background: #000; flex: 0 0 96px;
-}
+.thumb { width: 96px; height: 54px; border-radius: 8px; object-fit: cover; background: #000; flex: 0 0 96px; }
 .info { min-width: 0; flex: 1; }
 .title { font-size: 14px; line-height: 1.3; font-weight: 650; }
 .by { color: var(--muted); font-size: 11px; margin-top: 3px; }
 .badge {
-  flex: 0 0 auto;
-  font-size: 10px; letter-spacing: .04em;
+  flex: 0 0 auto; font-size: 10px; letter-spacing: .04em;
   border-radius: 999px; padding: 4px 7px;
   border: 1px solid var(--line); color: var(--muted);
 }
 .badge.ok { color: var(--ok); border-color: #1e5c40; }
 .empty { color: var(--muted); text-align: center; padding: 40px 10px; }
-body.theater .bar,
-body.theater main { display: none; }
+body.theater .bar, body.theater main { display: none; }
 body.theater header { position: static; border: 0; background: #000; }
-body.theater #stage,
-body.theater #stage.open {
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  background: #000;
-  border: 0;
+body.theater #stage, body.theater #stage.open {
+  display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 80; background: #000; border: 0;
 }
-body.theater .stage-frame {
-  flex: 1 1 auto;
-  aspect-ratio: auto;
-  width: 100%;
-  height: auto;
-}
-body.theater .stage-meta {
-  flex: 0 0 auto;
-  padding: 6px 12px calc(8px + env(safe-area-inset-bottom));
-}
+body.theater .stage-frame { flex: 1 1 auto; aspect-ratio: auto; width: 100%; height: auto; }
+body.theater .stage-meta { flex: 0 0 auto; padding: 6px 12px calc(8px + env(safe-area-inset-bottom)); }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
     <h1>AAHIGH KARAOKE</h1>
-    <p class="sub">Hard-coded list loads instantly. Tap Update list once. If the clipboard already holds a YouTube playlist link, that list is used. Otherwise it refreshes the AAHIGH karaoke playlist.<br>
+    <p class="sub">Search the whole playlist: title, channel, and description. Typing a request ignores the Here / YouTube chips so a street request does not vanish.<br>
     <a href="https://www.youtube.com/playlist?list=PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7">Source playlist</a></p>
-    <input id="q" type="search" placeholder="Search title or channel" autocomplete="off" enterkeyhint="search">
+    <input id="q" type="search" placeholder="Search title, artist, or description" autocomplete="off" enterkeyhint="search">
     <div class="filters">
       <button type="button" id="f-all" class="on">All</button>
       <button type="button" id="f-here">Play here</button>
@@ -165,21 +131,23 @@ body.theater .stage-meta {
 <main id="list"></main>
 <script>
 const DEFAULT_PLAYLIST = 'PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7';
-const STORE = 'aahighKaraoke.v1';
+const STORE = 'aahighKaraoke.v2';
 const HOSTS = [
   'https://invidious.f5.si',
   'https://invidious.nerdvpn.de',
   'https://yt.cdaut.de',
   'https://inv.nadeko.net',
-  'https://invidious.projectsegfau.lt',
-  'https://pipedapi.kavin.rocks'
+  'https://invidious.projectsegfau.lt'
 ];
 const BUILTIN = [{"id":"rAupLYs1oAE","t":"Eagles - Hotel California (4K Karaoke Version)","c":"MR. & MRS. KARAOKE","d":"6:56","e":1},{"id":"D9gA8erVrcY","t":"The Beatles - Come Together (Karaoke Version)","c":"Sing King","d":"5:00","e":0},{"id":"mcEivPqruow","t":"Journey - Faithfully (Karaoke Version)","c":"Sing King","d":"4:29","e":0},{"id":"ShMxICBtGNg","t":"Lynyrd Skynyrd - Sweet Home Alabama (Karaoke Version)","c":"Sing King","d":"4:33","e":0},{"id":"WDXiPavQjNg","t":"Eric Clapton - Wonderful Tonight (Karaoke Version)","c":"Sing King","d":"3:48","e":0},{"id":"c8wn2fMYvns","t":"Journey - Don't Stop Believin' (Karaoke Version)","c":"Sing King","d":"4:36","e":0},{"id":"gCrqBZlxSyA","t":"R.E.M - Losing My Religion (Karaoke Version)","c":"Sing King","d":"4:32","e":0},{"id":"7GyxwQHNfYQ","t":"Tears in Heaven - Eric Clapton | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:34","e":0},{"id":"fvw7mcuoY3c","t":"New kid in town Eagles karaoke","c":"GClef Karaoke","d":"5:08","e":1},{"id":"9d73xIKnQW0","t":"Van Halen • Runnin With The Devil (CC) 🎤 [Karaoke] [Instrumental Lyrics]","c":"CC Karaoke","d":"3:37","e":1},{"id":"DVxVXBpi7vc","t":"Chris Stapleton - Tennessee Whiskey (Karaoke Version)","c":"Sing King","d":"5:15","e":0},{"id":"NuCUb8J2JCQ","t":"Going To California Karaoke - Led Zeppelin","c":"weelychare_TV","d":"3:49","e":1},{"id":"3WLy3AblvmQ","t":"Radiohead - Creep (Karaoke Version)","c":"Sing King","d":"4:18","e":0},{"id":"AEce22afpbU","t":"Under the Bridge - Red Hot Chili Peppers | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:37","e":0},{"id":"5CmfSw0zGvc","t":"Pink Floyd - Comfortably Numb (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"4:58","e":1},{"id":"6S1ho7B-ui0","t":"Wicked Game - Chris Isaak | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:50","e":0},{"id":"C-tbyJLrTPc","t":"The Animals - House of the Rising Sun (Karaoke Version)","c":"Sing King","d":"4:42","e":0},{"id":"gKjIiaAXfDs","t":"The Police - Every Breath You Take (Karaoke Version)","c":"Sing King","d":"4:19","e":0},{"id":"1VmXdKsI14M","t":"Led Zeppelin  • Stairway To Heaven (CC Karaoke / Instrumental) [UVR]","c":"CC Karaoke","d":"7:59","e":1},{"id":"DPbBF9nniRM","t":"Pink Floyd - Time (Karaoke)","c":"BellySings Karaoke","d":"6:54","e":1},{"id":"OhRUYf_yn_s","t":"The Beatles - Let It Be (Karaoke Version)","c":"Sing King","d":"4:01","e":0},{"id":"RM5dHFENVBw","t":"Pink Floyd • Us And Them (CC) [Karaoke Instrumental Lyrics]","c":"CC Karaoke","d":"7:34","e":1},{"id":"QNpyGJtXWdk","t":"Led Zeppelin - Babe, I'm Gonna Leave You (Karaoke)","c":"Bighouse Karaoke","d":"6:43","e":1},{"id":"TW81DdhkI00","t":"Dust in the Wind - Kansas (Acoustic Karaoke)","c":"GUITARISTA","d":"3:52","e":1},{"id":"jNbrruU7Eow","t":"Lynyrd Skynyrd - Simple Man (Karaoke Version)","c":"Sing King","d":"6:19","e":0},{"id":"Iswb5lEX_QM","t":"I CAN'T TELL YOU WHY - Eagles (HD Karaoke)","c":"Atomic Karaoke... ","d":"3:32","e":0},{"id":"OozUwqWbXzc","t":"Simple Minds - Don't You (Forget About Me) (Karaoke Version)","c":"Sing King","d":"4:40","e":0},{"id":"u4yRckWcFNg","t":"STILL LOVING YOU - Scorpions (HD Karaoke)","c":"Atomic Karaoke... ","d":"5:48","e":1},{"id":"DEHcZZuwSHs","t":"Take It Easy Karaoke | The Eagles Karaoke Version","c":"Vocal Star Karaoke","d":"3:41","e":1},{"id":"cnCqNp1aaSE","t":"Phil Collins - Another Day in Paradise (Karaoke Version)","c":"Sing King","d":"5:26","e":0},{"id":"p3nDt0_iTmI","t":"Turn the Page - Bob Seger | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:58","e":0},{"id":"iEUcKL6uVWc","t":"Against the Wind - Bob Seger | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:45","e":0},{"id":"s3G4k02VRpI","t":"🎤 Steve Miller Band - Take The Money And Run Karaoke Version - King Of Karaoke","c":"King Of Karaoke","d":"3:24","e":1},{"id":"awp8HDUmSYA","t":"Feel Like Makin' Love - Bad Company | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:23","e":0},{"id":"hG0-x5v3oTc","t":"Tom Petty & Heartbreakers - You Got Lucky (Karaoke & Lyrics)","c":"Let's Sing Karaoke","d":"3:46","e":1},{"id":"PUAqBG9U_zA","t":"Tom Petty - I Won't Back Down (Karaoke Version)","c":"Sing King","d":"3:09","e":0},{"id":"q5U6322Vg3M","t":"Still The Same - Bob Seger | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:30","e":0},{"id":"6yayFWzIvcs","t":"Breakdown - Tom Petty | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:13","e":0},{"id":"Gt2vlHHYMoQ","t":"Refugee - Tom Petty | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:39","e":0},{"id":"_9WII3ShrFU","t":"Night Moves - Bob Seger | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:33","e":0},{"id":"DsFde2IK9Rk","t":"You Don't Know How It Feels - Tom Petty | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:56","e":0},{"id":"QzMQsuFtJPY","t":"Pink Floyd - The Gunner's Dream (karaoke)","c":"trixen","d":"5:32","e":1},{"id":"_RQSXcmRt4U","t":"Pink Floyd - Brain Damage/Eclipse (Medley) - Karaoke Version from Zoom Karaoke","c":"Zoom Karaoke Official","d":"5:29","e":1},{"id":"OuG4Z4kLCD8","t":"Roger Waters - The Tide Is Turning KARAOKE","c":"KEEP THE BEST ALIVE","d":"5:45","e":1},{"id":"3YCVSD5CJ-I","t":"Scorpions - Rock You Like A Hurricane (Melody) (Karaoke Version)","c":"ZZang KARAOKE","d":"4:23","e":1},{"id":"ybujfv_yaHc","t":"Don McLean - American Pie (Karaoke Version)","c":"Sing King","d":"8:55","e":0},{"id":"rRcCgcll5uE","t":"Doors   Light My Fire Karaoke","c":"GOLDEN KARAOKE","d":"3:56","e":1},{"id":"Pndis0TPpfw","t":"Working Man - Rush | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"7:16","e":0},{"id":"TkeI9pk8NuI","t":"U2 - With Or Without You (Karaoke Version) with Lyrics HD Vocal-Star Karaoke","c":"Vocal Star Karaoke","d":"5:21","e":1},{"id":"jt9avLaqPng","t":"Van Halen • Ain't Talkin Bout Love (CC) 🎤 [Karaoke] [Instrumental Lyrics]","c":"CC Karaoke","d":"3:50","e":1},{"id":"Lsty-LgDNxc","t":"Led Zepplin - Rock and Roll (Karaoké)","c":"Stéphane B","d":"3:40","e":1},{"id":"RZ9KzltfVug","t":"Van Halen • You Really Got Me (CC) 🎤 [Karaoke] [Instrumental Lyrics]","c":"CC Karaoke","d":"2:39","e":1},{"id":"FH1UkgJCUOc","t":"Doors - Roadhouse Blues (Karaoke Version)","c":"Karaoke Rock","d":"4:14","e":1},{"id":"QNkM8K0e3hQ","t":"DESPERADO - Eagles (HD Karaoke)","c":"Atomic Karaoke... ","d":"3:44","e":1},{"id":"aS2mCY0o12k","t":"Zombie - The Cranberries (Karaoke version hd)","c":"KaraokeyTV","d":"5:32","e":1},{"id":"zz-zCVNu7wU","t":"Led Zeppelin   Kashmir Karaoke","c":"GOLDEN KARAOKE","d":"9:03","e":1},{"id":"VwdY8J6EI6U","t":"Doors - Riders On The Storm (Karaoke & Lyrics)","c":"Let's Sing Karaoke","d":"6:57","e":1},{"id":"rl0aAjqWXd0","t":"More than words - Extreme (Acoustic karaoke)","c":"Acoustic Lounge","d":"5:59","e":1},{"id":"P9UUrX4lwPk","t":"Creedence Clearwater Revival - Have You Ever Seen The Rain (Karaoke with Lyrics)","c":"Stingray Karaoke","d":"2:55","e":1},{"id":"zWwoORBFbdE","t":"Don't Do Me Like That - Tom Petty | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:00","e":0},{"id":"idwOJXfzrec","t":"Limelight - Rush | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:27","e":0},{"id":"tg2TwpuhjVQ","t":"Tom Sawyer - Rush | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:40","e":0},{"id":"zOf5vhv5SQA","t":"Doors, The - L.A. Woman (Karaoke & Lyrics)","c":"Let's Sing Karaoke","d":"7:58","e":1},{"id":"iukujDXkWPc","t":"Gimme Three Steps - Lynyrd Skynyrd | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:46","e":0},{"id":"Y3BjzwXhYik","t":"Pink Floyd /Brain Damage-Eclipse /Karaoke","c":"Cor 79","d":"5:24","e":1},{"id":"U3z0lGohgBE","t":"Hit Me With Your Best Shot - Pat Benatar | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:00","e":0},{"id":"BN_PRww8RtA","t":"Hard To Say I'm Sorry (KARAOKE) | Chicago","c":"Pinoy Karaoke Battle","d":"4:02","e":1},{"id":"InA7u2vEvpc","t":"Led Zeppelin - When The Levee Breaks Karaoke","c":"TimCasto","d":"7:26","e":1},{"id":"OBzl83j-8IE","t":"Tears For Fears -  Everybody Wants To Rule The World (Karaoke Version)","c":"Sing King","d":"4:27","e":0},{"id":"umkNSv1fNXw","t":"I Still Haven't Found What I'm Looking For (Karaoke) - U2","c":"KaraokeJP","d":"5:02","e":1},{"id":"pX2BkCElPmk","t":"Oasis - Champagne Supernova (Karaoke Version)","c":"Sing King","d":"7:38","e":0},{"id":"8J78hPKhbfo","t":"Immigrant song","c":"Patrice Létourneau","d":"2:28","e":1},{"id":"fJkWJ-PuJaI","t":"Tom Petty And The Heartbreakers - Mary Jane's Last Dance (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"4:34","e":1},{"id":"lsKLNlFWsI4","t":"Like A Rock - Bob Seger | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"6:01","e":0},{"id":"5zGdD6CGPhs","t":"Oh, Pretty Woman - Roy Orbison | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:02","e":0},{"id":"tB__1YgCtrw","t":"Van Halen - Ice Cream Man (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"3:30","e":1},{"id":"KXs5tbzSlFQ","t":"Don't Speak - No Doubt | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:44","e":0},{"id":"8pE1h4D9iro","t":"REO Speedwagon - Can't Fight This Feeling (Karaoke Version)","c":"Sing King","d":"4:57","e":0},{"id":"UIaO5lW1rIw","t":"Yes • Owner Of A Lonely Heart (CC) 🎤 [Karaoke] [Instrumental Lyrics]","c":"CC Karaoke","d":"4:37","e":1},{"id":"kZaoglNmtJc","t":"LED ZEPPELIN - Since I've Been Loving You (Karaoke)","c":"Silosabecante Karaoke","d":"7:27","e":1},{"id":"tuTX3VOr5oo","t":"Pink Floyd • Wish You Were Here (CC) [Karaoke Instrumental Lyrics]","c":"CC Karaoke","d":"5:16","e":1},{"id":"s3HTUq9j7yI","t":"Keep Your Hands To Yourself - The Georgia Satellites | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:33","e":0},{"id":"_29l0oBJfOM","t":"Bonnie Tyler - Total Eclipse Of The Heart (Karaoke)","c":"karaoke SESH","d":"4:52","e":0},{"id":"fXvB7uBsg4U","t":"(Karaoke)Dazed And Confused by Led Zeppelin","c":"Bitter Sweet Karaoke","d":"6:39","e":1},{"id":"YqcheaurrF0","t":"YOU'RE THE INSPIRATION - Chicago (HD Karaoke)","c":"Atomic Karaoke... ","d":"4:07","e":1},{"id":"f7SyBXYWL90","t":"Phil Collins - Against All Odds (Karaoke Version)","c":"Sing King","d":"3:28","e":0},{"id":"UOG3LRXsNZY","t":"Led Zeppelin   Whole Lotta Love MusicPlayOn com","c":"Svjetlana Komuskic Filipovic","d":"3:32","e":1},{"id":"dh0gLJCvmcI","t":"The Doors - People Are Strange (Karaoke Version)","c":"Sing King","d":"2:31","e":0},{"id":"XgRMFgNrqO8","t":"IMAGINE [ KARAOKE ] - JOHN LENNON@nuansamusikkaraoke","c":"Nuansa Musik Karaoke","d":"3:19","e":1},{"id":"Ngi6Bn3kkS4","t":"Led Zeppelin - The Rain Song BEST Karaoke Versions","c":"Original Content Trivia Jimmy Loram","d":"6:00","e":1},{"id":"UOAsXQk1hII","t":"Moondance - Van Morrison | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:34","e":0},{"id":"B4a2RsRoCT8","t":"Whitesnake • Here I Go Again (BVs) (CC) 🎤 [Karaoke] [Instrumental Lyrics]","c":"CC Karaoke","d":"4:36","e":1},{"id":"ZRLWN7p_kUk","t":"Cocaine - Eric Clapton | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:42","e":0},{"id":"FDWUWL7dhvM","t":"Soul to Squeeze - Red Hot Chili Peppers (Karaoke)","c":"CAL Good Vibes","d":"5:02","e":1},{"id":"p1kgMiUe7Jw","t":"Is This Love - Whitesnake | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:33","e":0},{"id":"QoyrwexpymI","t":"Tom Petty and The Heartbreakers - Runnin' Down A Dream (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"3:34","e":1},{"id":"9LU8x_h8N6U","t":"Queen - We Will Rock You (Karaoke Version)","c":"Vocal Star Karaoke","d":"2:22","e":1},{"id":"7vJOoY1tjvY","t":"The Rolling Stones - Sympathy For The Devil (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"6:26","e":1},{"id":"GzoTgLGX7IM","t":"The Black Eyed Peas - I Gotta Feeling (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"4:16","e":1},{"id":"2sYJoGz5fo4","t":"I Gotta Feeling (Karaoke) - Black Eyed Peas","c":"Tracks Planet Karaoke","d":"4:55","e":1},{"id":"YZgfcptVuXs","t":"Rebel Yell - Billy Idol | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:58","e":0},{"id":"WGIPBu8sbYw","t":"Steppenwolf - Born To Be Wild (Karaoke Version)","c":"Sing King","d":"3:43","e":0},{"id":"DkkmT9d8yI4","t":"Heart of Glass - Blondie | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:11","e":0},{"id":"j8ru5CnCnnU","t":"Have You Ever Seen the Rain - Creedence Clearwater Revival | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"2:43","e":0},{"id":"BRz_UpdVaK4","t":"Phil Collins - In The Air Tonight (Karaoke Version)","c":"Sing King","d":"6:15","e":0},{"id":"bUcieJ1EZ6Y","t":"Clint Eastwood - Gorillaz | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:50","e":0},{"id":"K1n5_8d0MsU","t":"The Mamas & The Papas - California Dreamin' (Karaoke Version)","c":"Sing King","d":"2:51","e":0},{"id":"Dy6CP3WZwLw","t":"Van Halen - Jump (Karaoke Version)","c":"Sing King","d":"4:22","e":0},{"id":"DX5oGGCSNbs","t":"AC/DC - Thunderstruck (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"4:59","e":1},{"id":"9Lxm0iSnKNc","t":"Queen - Bohemian Rhapsody (Karaoke Version)","c":"Sing King","d":"6:15","e":0},{"id":"aLSKPP7Wry4","t":"Hotel California * Eagles * Acoustic Guitar Karaoke","c":"Acoustic Guitar","d":"7:26","e":1},{"id":"65U2B9puhE4","t":"Heart-Shaped Box - Nirvana | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:38","e":0},{"id":"HQmmM_qwG4k","t":"Led Zeppelin - Whole Lotta Love (Official Music Video)","c":"Led Zeppelin","d":"4:49","e":1},{"id":"YRFNMAFL5j0","t":"Don't Stop Believin' (Small Town Girl) - Journey | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:18","e":0},{"id":"9ySSw1CpSAI","t":"You Shook Me All Night Long - ACDC (Karaoke Version)","c":"EasyKaraoke","d":"3:42","e":1},{"id":"hQH8ng7lP-U","t":"Edge of Seventeen - Stevie Nicks | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:39","e":0},{"id":"d60eXI-d7k4","t":"Come and Get Your Love - Redbone | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:45","e":0},{"id":"QkF3oxziUI4","t":"Led Zeppelin - Stairway To Heaven (Official Audio)","c":"Led Zeppelin","d":"8:03","e":1},{"id":"dg9T9zaCN0M","t":"Joan Jett & The Blackhearts - I Love Rock 'N Roll (Karaoke Version)","c":"Sing King","d":"3:14","e":0},{"id":"gnCFEwyArGM","t":"Creedence Clearwater Revival - Bad Moon Rising (Karaoke Version)","c":"Sing King","d":"2:34","e":0},{"id":"nS7k4Z45Rmw","t":"Jailhouse Rock - Elvis Presley | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"2:40","e":0},{"id":"rY0WxgSXdEE","t":"Queen - Another One Bites the Dust (Official Video Remastered)","c":"Queen Official","d":"3:39","e":1},{"id":"wIpJZVVvsiw","t":"Black Sabbath - War Pigs (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"5:58","e":1},{"id":"xeEegnhKsbw","t":"Yellow - Coldplay | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:35","e":0},{"id":"KFUW0p50P58","t":"November Rain - Guns N' Roses (Karaoke Songs With Lyrics - Original Key)","c":"Musisi Karaoke","d":"9:03","e":1},{"id":"gd4mB-zUcO8","t":"Elvis Presley - Can't Help Falling In Love (Karaoke Version)","c":"Sing King","d":"3:34","e":0},{"id":"yy-9EsRiLUs","t":"Fleetwood Mac - Rhiannon (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"3:46","e":1},{"id":"H9KZCR7Rdwc","t":"Kryptonite - 3 Doors Down | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:52","e":0},{"id":"AcEGxX5T-iM","t":"Black Sabbath - Paranoid (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"3:11","e":1},{"id":"iNljns_6zBA","t":"You Can't Always Get What You Want - The Rolling Stones | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:09","e":0},{"id":"n9puk0CMRnQ","t":"Could You Be Loved - Bob Marley | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:39","e":0},{"id":"fBMGy4d9XZw","t":"The Rolling Stones - Paint It, Black (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"3:34","e":1},{"id":"uw3zzQ-5g4o","t":"The Beatles - Yesterday (Karaoke Version)","c":"Sing King","d":"2:22","e":0},{"id":"hVA5qsh6IX4","t":"Police - Every Breath You Take (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"4:04","e":1},{"id":"jkgiZ-HuNVI","t":"Another Brick In The Wall - In Style Of Pink Floyd - Karaoke.flv","c":"harryecp","d":"2:47","e":1},{"id":"lJoYsnj42mA","t":"Come As You Are (KARAOKE) | Nirvana","c":"Pinoy Karaoke Battle","d":"4:14","e":1},{"id":"o-tT62bpYlU","t":"Led Zeppelin - Over the Hills and Far Away (Official Music Video)","c":"Led Zeppelin","d":"4:53","e":1},{"id":"Cjudlh8Mb3M","t":"Johnny Cash - Hurt (Karaoke Version)","c":"Sing King","d":"4:03","e":0},{"id":"OjE3mRXOtcY","t":"Psycho Killer - Talking Heads | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:21","e":0},{"id":"UmCtyX3iw7A","t":"Wild Cherry - Play That Funky Music (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"5:09","e":1},{"id":"IqksU_kP4iA","t":"Ray Charles - Hit The Road Jack (Karaoke)","c":"Starlight Karaoke","d":"3:31","e":1},{"id":"DJM8cl7k4oc","t":"Chuck Berry - Johnny B. Goode (Karaoke Version)","c":"Sing King","d":"2:57","e":0},{"id":"0zp2AQqetVo","t":"Paint It Black - Rolling Stones (Karaoke Version)","c":"EasyKaraoke","d":"3:19","e":1},{"id":"RlngN3tXpLU","t":"Should I Stay or Should I Go - The Clash | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:09","e":0},{"id":"tuk1NnnMQBA","t":"The Rolling Stones - Beast of Burden (Official Lyric Video)","c":"The Rolling Stones","d":"4:27","e":1},{"id":"alME8Tthh1w","t":"The Rolling Stones - Miss You - Karaoke Version from Zoom Karaoke","c":"Zoom Karaoke Official","d":"4:42","e":1},{"id":"FS9nziz71lw","t":"Mrs. Robinson - Simon & Garfunkel | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:55","e":0},{"id":"K53mVAZMf5A","t":"No One Knows - Queens of the Stone Age | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:22","e":0},{"id":"RlK9pfsYwZo","t":"Bon Jovi - Wanted Dead Or Alive (Karaoke Version)","c":"Sing King","d":"5:22","e":0},{"id":"wanjkvlxbho","t":"Smells Like Teen Spirit - Nirvana | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:02","e":0},{"id":"IdzZ4I4f62I","t":"Stuck in the Middle with You - Stealers Wheel | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:28","e":0},{"id":"wBCI7Sn0UVA","t":"No Rain - Blind Melon | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:44","e":0},{"id":"NhuvdOuMhkk","t":"The Man Who Sold the World - Nirvana | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:44","e":0},{"id":"rFJFPH4mk1c","t":"Mother - Danzig | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"3:28","e":0},{"id":"T_-gdkIrBjQ","t":"The Rolling Stones - Brown Sugar - Karaoke Version from Zoom Karaoke","c":"Zoom Karaoke Official","d":"3:56","e":1},{"id":"abw__u5w4A8","t":"Led Zeppelin - History Of Led Zeppelin (Episode 14)","c":"Led Zeppelin","d":"2:35","e":1},{"id":"Lf2gCTJ2pt8","t":"The Rolling Stones - Jumping Jack Flash (Karaoke Version) with Lyrics On Screen","c":"Zoom Karaoke Official","d":"3:26","e":1},{"id":"ouRPDe_AS68","t":"Patience - Guns N' Roses | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"5:57","e":0},{"id":"oLShwvZopls","t":"4 Non Blondes - What's Up (Karaoke Version)","c":"Sing King","d":"5:15","e":0},{"id":"mU0kFPClOlw","t":"(I Just) Died in Your Arms - Cutting Crew | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:31","e":0},{"id":"Z6Zr01BfjBM","t":"Elvis Presley - Suspicious Minds (Karaoke Version)","c":"Sing King","d":"4:39","e":0},{"id":"uV-nI9Tg0X4","t":"Beast of Burden - The Rolling Stones | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:37","e":0},{"id":"udGPDz2s3Eg","t":"Knockin' On Heaven's Door - Guns N' Roses (Karaoke Songs With Lyrics - Original Key)","c":"Musisi Karaoke","d":"6:10","e":1},{"id":"nVhNCTH8pDs","t":"Pink Floyd - Learning To Fly (Official Music Video HD)","c":"Pink Floyd","d":"4:31","e":1},{"id":"SGyOaCXr8Lw","t":"The Rolling Stones - Start Me Up - Official Promo","c":"The Rolling Stones","d":"3:28","e":1},{"id":"xWkpPV0U4EM","t":"Don't Bring Me Down - Electric Light Orchestra | Karaoke Version | KaraFun","c":"KaraFun Karaoke","d":"4:09","e":0},{"id":"97YGQFxrOX0","t":"Pink Floyd - Dogs (karaoke full song)","c":"Hal Jam","d":"17:17","e":1},{"id":"9Lg1HydZ5Cw","t":"Shine on you crazy diamond karaoke - Pink Floyd - Version Lyrics from karaking Karaoke","c":"KaraKing Karaoke ","d":"5:50","e":1},{"id":"Fd_Xo8ZF-l8","t":"Eagles - Seven Bridges Road (Karaoke Version)","c":"PARTY TYME KARAOKE CHANNEL","d":"3:05","e":1},{"id":"859nUAoWnog","t":"Styx - Too Much Time on My Hands Karaoke","c":"Darrylr Mansir","d":"4:37","e":1},{"id":"LkL9QTjZyk4","t":"The Fixx - Saved By Zero - Karaoke - With Backing Vocals - Lead Vocals Removed","c":"DiamondDaveMusic","d":"3:50","e":1},{"id":"sJfymFMiREM","t":"Duran Duran - Is There Something I Should Know - Karaoke Version from Zoom Karaoke","c":"Zoom Karaoke Official","d":"4:13","e":1},{"id":"HsFIZYD5Fnc","t":"Duran Duran - The Reflex - Karaoke Version from Zoom Karaoke","c":"Zoom Karaoke Official","d":"4:52","e":1},{"id":"CRrZlEF7-SU","t":"Toto - Africa (Karaoke Version)","c":"Sing King","d":"5:10","e":0},{"id":"HlOBue-LABo","t":"Duran Duran - Girls On Film (Karaoke)","c":"Best Original Karaoke","d":"3:37","e":1}];
+const BUILTIN_BY_ID = {};
+BUILTIN.forEach(s => { BUILTIN_BY_ID[s.id] = s; });
 
-let SONGS = BUILTIN.slice();
+let SONGS = BUILTIN.map(copySong);
 let sourceLabel = 'Built-in AAHIGH list';
 let filter = 'all';
 let activeId = null;
+let enriching = false;
 
 const list = document.getElementById('list');
 const q = document.getElementById('q');
@@ -191,6 +159,9 @@ const stageTitle = document.getElementById('stage-title');
 const stageBy = document.getElementById('stage-by');
 const openYt = document.getElementById('open-yt');
 
+function copySong(s) {
+  return { id: s.id, t: s.t, c: s.c, d: s.d, e: s.e, g: s.g || '' };
+}
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -201,6 +172,25 @@ function fmtDur(sec) {
   const s = sec % 60;
   return m + ':' + String(s).padStart(2, '0');
 }
+function norm(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+function tokens(s) {
+  return norm(s).split(' ').filter(Boolean);
+}
+function haystack(s) {
+  const b = BUILTIN_BY_ID[s.id];
+  return norm([
+    s.t, s.c, s.g, s.d,
+    b ? b.t : '', b ? b.c : '', b ? b.g : ''
+  ].join(' '));
+}
+function matches(s, query) {
+  const words = tokens(query);
+  if (!words.length) return true;
+  const h = haystack(s);
+  return words.every(w => h.indexOf(w) !== -1);
+}
 function isLandscape() {
   if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return true;
   const w = window.visualViewport ? window.visualViewport.width : window.innerWidth;
@@ -210,12 +200,9 @@ function isLandscape() {
 function syncTheater() {
   document.body.classList.toggle('theater', !!activeId && isLandscape());
 }
-
 function knownEmbed(id) {
-  const hit = BUILTIN.find(s => s.id === id);
-  return hit ? hit.e : 1;
+  return BUILTIN_BY_ID[id] ? BUILTIN_BY_ID[id].e : 1;
 }
-
 function extractPlaylistId(text) {
   if (!text) return null;
   const s = String(text).replace(/\s+/g, ' ').trim();
@@ -226,7 +213,6 @@ function extractPlaylistId(text) {
   if (/^(PL|OLAK5|UU|FL)[A-Za-z0-9_-]+$/.test(s)) return s;
   return null;
 }
-
 async function readClipboard() {
   try {
     if (navigator.clipboard && navigator.clipboard.readText) {
@@ -235,76 +221,113 @@ async function readClipboard() {
   } catch (e) {}
   return '';
 }
-
 async function fetchPlaylist(plid) {
   let lastErr = 'no host';
   for (const host of HOSTS) {
-    const urls = host.indexOf('piped') >= 0
-      ? [host + '/playlists/' + plid]
-      : [host + '/api/v1/playlists/' + plid];
-    for (const url of urls) {
-      try {
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-        if (!res.ok) { lastErr = host + ' ' + res.status; continue; }
-        const data = await res.json();
-        const raw = data.videos || data.relatedStreams || [];
-        const songs = [];
-        const seen = {};
-        raw.forEach(v => {
-          const id = v.videoId || (v.url && (v.url.match(/v=([A-Za-z0-9_-]{11})/) || v.url.match(/\/([A-Za-z0-9_-]{11})$/) || [])[1]);
-          if (!id || seen[id]) return;
-          seen[id] = 1;
-          const sec = v.lengthSeconds != null ? v.lengthSeconds : v.duration;
-          songs.push({
-            id: id,
-            t: v.title || id,
-            c: v.author || v.uploaderName || '',
-            d: typeof sec === 'number' ? fmtDur(sec) : (v.duration || ''),
-            e: knownEmbed(id)
-          });
+    const url = host + '/api/v1/playlists/' + plid;
+    try {
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) { lastErr = host + ' ' + res.status; continue; }
+      const data = await res.json();
+      const raw = data.videos || [];
+      const songs = [];
+      const seen = {};
+      raw.forEach(v => {
+        const id = v.videoId;
+        if (!id || seen[id]) return;
+        seen[id] = 1;
+        const b = BUILTIN_BY_ID[id];
+        songs.push({
+          id: id,
+          t: v.title || (b && b.t) || id,
+          c: v.author || (b && b.c) || '',
+          d: v.lengthSeconds != null ? fmtDur(v.lengthSeconds) : ((b && b.d) || ''),
+          e: knownEmbed(id),
+          g: [v.description || '', b && b.t, b && b.c, b && b.g].filter(Boolean).join(' ')
         });
-        if (songs.length) {
-          return { title: data.title || data.name || plid, songs: songs };
-        }
-        lastErr = host + ' empty';
-      } catch (e) {
-        lastErr = host + ' fail';
-      }
+      });
+      if (songs.length) return { title: data.title || plid, songs: songs };
+      lastErr = host + ' empty';
+    } catch (e) {
+      lastErr = host + ' fail';
     }
   }
   throw new Error(lastErr);
 }
 
-function persist(payload) {
-  try { localStorage.setItem(STORE, JSON.stringify(payload)); } catch (e) {}
+async function enrichDescriptions(songs) {
+  if (enriching) return;
+  const need = songs.filter(s => !s.g || s.g.length < 40);
+  if (!need.length) return;
+  enriching = true;
+  let filled = 0;
+  const queue = need.slice();
+  async function one(host, song) {
+    const url = host + '/api/v1/videos/' + song.id;
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('bad');
+    const data = await res.json();
+    const extra = [data.description, data.genre, (data.keywords || []).join(' ')].filter(Boolean).join(' ');
+    if (extra) {
+      song.g = (song.g ? song.g + ' ' : '') + extra;
+      filled += 1;
+    }
+  }
+  const workers = 3;
+  async function worker() {
+    while (queue.length) {
+      const song = queue.shift();
+      let ok = false;
+      for (const host of HOSTS) {
+        try { await one(host, song); ok = true; break; } catch (e) {}
+      }
+      if (!ok) continue;
+    }
+  }
+  await Promise.all(Array.from({ length: workers }, worker));
+  enriching = false;
+  persistCurrent();
+  if (filled) {
+    setStatus('Loaded descriptions for ' + filled + ' songs. Search includes those now.');
+    render();
+  }
+}
+
+function persistCurrent() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify({
+      songs: SONGS, label: sourceLabel, at: Date.now()
+    }));
+  } catch (e) {}
 }
 function loadStored() {
   try {
-    const raw = localStorage.getItem(STORE);
+    const raw = localStorage.getItem(STORE) || localStorage.getItem('aahighKaraoke.v1');
     if (!raw) return null;
     const data = JSON.parse(raw);
     if (!data || !Array.isArray(data.songs) || !data.songs.length) return null;
     return data;
   } catch (e) { return null; }
 }
-
 function applySongs(songs, label) {
   closePlayer();
   SONGS = songs;
   sourceLabel = label;
+  persistCurrent();
   render();
 }
 
 function filtered() {
-  const n = q.value.trim().toLowerCase();
+  const query = q.value;
+  const searching = tokens(query).length > 0;
   return SONGS.filter(s => {
+    if (!matches(s, query)) return false;
+    if (searching) return true;
     if (filter === 'here' && !s.e) return false;
     if (filter === 'yt' && s.e) return false;
-    if (!n) return true;
-    return (s.t + ' ' + s.c).toLowerCase().includes(n);
+    return true;
   });
 }
-
 function destroyPlayer() { stageFrame.innerHTML = ''; }
 function closePlayer() {
   destroyPlayer();
@@ -339,13 +362,13 @@ function openYouTube(song) {
   closePlayer();
   window.location.href = 'https://www.youtube.com/watch?v=' + song.id;
 }
-
 function render() {
   const rows = filtered();
+  const queryOn = tokens(q.value).length > 0;
   const here = rows.filter(s => s.e).length;
-  count.textContent = sourceLabel + ' · ' + rows.length + ' shown · ' + here + ' play here';
+  count.textContent = sourceLabel + ' · ' + rows.length + (queryOn ? ' matches' : ' shown') + ' of ' + SONGS.length + ' · ' + here + ' play here';
   if (!rows.length) {
-    list.innerHTML = '<div class="empty">No matches.</div>';
+    list.innerHTML = '<div class="empty">No matches in this playlist.</div>';
     return;
   }
   list.innerHTML = rows.map((s, i) =>
@@ -367,24 +390,21 @@ async function updateList() {
   const clip = await readClipboard();
   const fromClip = extractPlaylistId(clip);
   const plid = fromClip || DEFAULT_PLAYLIST;
-  setStatus(fromClip
-    ? 'Clipboard playlist found. Loading.'
-    : 'No playlist in clipboard. Loading AAHIGH karaoke list.');
+  setStatus(fromClip ? 'Clipboard playlist found. Loading.' : 'No playlist in clipboard. Loading AAHIGH karaoke list.');
   try {
     const data = await fetchPlaylist(plid);
     const label = (fromClip ? 'Clipboard · ' : 'AAHIGH · ') + data.title + ' · ' + data.songs.length + ' songs';
-    persist({ plid: plid, title: data.title, songs: data.songs, fromClip: !!fromClip, at: Date.now() });
     applySongs(data.songs, label);
-    setStatus('Loaded ' + data.songs.length + ' songs.');
+    setStatus('Loaded ' + data.songs.length + ' songs. Search the whole list. Pulling descriptions in the background.');
+    enrichDescriptions(data.songs);
   } catch (e) {
-    setStatus('Update failed. Built-in list is still here. Host this page on HTTPS for clipboard and refresh.');
+    setStatus('Update failed. Built-in list is still here.');
   }
   btn.disabled = false;
 }
-
 function useBuiltin() {
-  try { localStorage.removeItem(STORE); } catch (e) {}
-  applySongs(BUILTIN.slice(), 'Built-in AAHIGH list');
+  try { localStorage.removeItem(STORE); localStorage.removeItem('aahighKaraoke.v1'); } catch (e) {}
+  applySongs(BUILTIN.map(copySong), 'Built-in AAHIGH list');
   setStatus('Restored built-in list.');
 }
 
@@ -416,9 +436,11 @@ if (window.visualViewport) window.visualViewport.addEventListener('resize', sync
 (function init() {
   const stored = loadStored();
   if (stored) {
-    SONGS = stored.songs;
-    sourceLabel = (stored.fromClip ? 'Saved clipboard · ' : 'Saved AAHIGH · ') + (stored.title || stored.plid);
-    setStatus('Using last updated list. Tap Built-in list to go back.');
+    SONGS = stored.songs.map(s => ({
+      id: s.id, t: s.t, c: s.c, d: s.d, e: s.e, g: s.g || ''
+    }));
+    sourceLabel = stored.label || 'Saved list';
+    setStatus('Using last updated list. Type a request to search the whole playlist.');
   }
   render();
 })();
