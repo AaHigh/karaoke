@@ -63,6 +63,24 @@ h1 { font-size: 15px; letter-spacing: .12em; margin: 0; font-weight: 700; }
 #status { min-height: 16px; }
 #stage { display: none; background: #000; border-top: 1px solid var(--line); }
 #stage.open { display: block; }
+body.perform .chrome { display: none; }
+body.perform #count { display: none; }
+.searchrow { display: flex; gap: 8px; align-items: center; }
+.searchrow #q { flex: 1; }
+#setup-toggle {
+  flex: 0 0 auto;
+  font-size: 13px; font-weight: 650;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #22222c; color: var(--accent);
+  padding: 10px 10px;
+}
+body.playing #stage.open,
+body.perform #stage.open {
+  position: sticky;
+  top: var(--playtop, 52px);
+  z-index: 25;
+}
 .stage-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .stage-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .stage-meta { padding: 8px 14px 10px; background: #111116; }
@@ -103,37 +121,43 @@ body.theater .stage-meta { flex: 0 0 auto; padding: 6px 12px calc(8px + env(safe
 <body>
 <header>
   <div class="bar">
-    <h1>AAHIGH KARAOKE</h1>
-    <p class="sub">Search the whole playlist: title, channel, and description. Typing a request ignores the Here / YouTube chips so a street request does not vanish. To freeze a new hard-coded list later, run ./update next to this file. No Grok step.<br>
-    <a href="https://www.youtube.com/playlist?list=PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7">Source playlist</a></p>
-    <input id="q" type="search" placeholder="Search title, artist, or description" autocomplete="off" enterkeyhint="search">
-    <div class="filters">
-      <button type="button" id="f-all" class="on">All</button>
-      <button type="button" id="f-here">Play here</button>
-      <button type="button" id="f-yt">YouTube only</button>
+    <div class="chrome">
+      <h1>AAHIGH KARAOKE</h1>
+      <p class="sub">Search the whole playlist: title, channel, and description. A YT badge opens YouTube. HERE only means this page can play it.<br>
+      <a href="https://www.youtube.com/playlist?list=PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7">Source playlist</a></p>
+      <div class="filters">
+        <button type="button" id="f-all" class="on">All</button>
+        <button type="button" id="f-here">Play here</button>
+        <button type="button" id="f-yt">YouTube only</button>
+      </div>
+      <div class="picks" id="picks"></div>
+      <div class="tools">
+        <button type="button" class="primary" id="update">Update list</button>
+        <button type="button" id="make-default">Make this the default</button>
+        <button type="button" id="builtin">Built-in list</button>
+      </div>
+      <div id="status"></div>
     </div>
-    <div class="picks" id="picks"></div>
-    <div class="tools">
-      <button type="button" class="primary" id="update">Update list</button>
-      <button type="button" id="make-default">Make this the default</button>
-      <button type="button" id="builtin">Built-in list</button>
+    <div class="searchrow">
+      <button type="button" id="setup-toggle">Setup</button>
+      <input id="q" type="search" placeholder="Search title, artist, or description" autocomplete="off" enterkeyhint="search">
     </div>
-    <div id="status"></div>
     <div id="count"></div>
   </div>
-  <div id="stage">
-    <div class="stage-frame" id="stage-frame"></div>
-    <div class="stage-meta">
-      <div class="stage-title" id="stage-title"></div>
-      <div class="stage-by" id="stage-by"></div>
-      <div class="stage-actions">
-        <a id="open-yt" href="#" target="_blank" rel="noopener">Open in YouTube</a>
-        <button type="button" id="close">Close player</button>
-      </div>
+</header>
+<div id="stage">
+  <div class="stage-frame" id="stage-frame"></div>
+  <div class="stage-meta">
+    <div class="stage-title" id="stage-title"></div>
+    <div class="stage-by" id="stage-by"></div>
+    <div class="stage-actions">
+      <a id="open-yt" href="#" target="_blank" rel="noopener">Open in YouTube</a>
+      <button type="button" id="close">Close player</button>
     </div>
   </div>
-</header>
+</div>
 <main id="list"></main>
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const DEFAULT_PLAYLIST = 'PL0YLeM02ZJ57BZf6e5YUDMfEs73-t0LB7';
 const HOME_NAME = 'AAHIGH Karaoke';
@@ -212,7 +236,8 @@ function syncTheater() {
   document.body.classList.toggle('theater', !!activeId && isLandscape());
 }
 function knownEmbed(id) {
-  return BUILTIN_BY_ID[id] ? BUILTIN_BY_ID[id].e : 1;
+  if (BUILTIN_BY_ID[id]) return BUILTIN_BY_ID[id].e;
+  return currentPlid === DEFAULT_PLAYLIST ? 1 : 0;
 }
 function extractPlaylistId(text) {
   if (!text) return null;
@@ -401,29 +426,61 @@ function closePlayer() {
   stage.classList.remove('open');
   activeId = null;
   document.body.classList.remove('theater');
+  document.body.classList.remove('playing');
   document.querySelectorAll('.row.now').forEach(el => el.classList.remove('now'));
+}
+function setPerform(on) {
+  document.body.classList.toggle('perform', !!on);
+  const btn = document.getElementById('setup-toggle');
+  if (btn) btn.textContent = on ? 'Setup' : 'Hide setup';
+  const hdr = document.querySelector('header');
+  document.documentElement.style.setProperty('--playtop', (hdr ? hdr.offsetHeight : 52) + 'px');
+}
+function markPlaying() {
+  document.body.classList.add('playing');
+  setPerform(true);
 }
 function playHere(song) {
   destroyPlayer();
   activeId = song.id;
   stage.classList.add('open');
+  markPlaying();
   stageTitle.textContent = song.t;
   stageBy.textContent = song.c + ' · ' + song.d;
   openYt.href = 'https://www.youtube.com/watch?v=' + song.id;
-  const iframe = document.createElement('iframe');
-  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
-  iframe.setAttribute('allowfullscreen', '');
-  iframe.setAttribute('webkitallowfullscreen', '');
-  iframe.title = song.t;
-  iframe.src = 'https://www.youtube.com/embed/' + song.id + '?autoplay=1&playsinline=1&rel=0&fs=1';
-  stageFrame.appendChild(iframe);
+  const holder = document.createElement('div');
+  holder.id = 'yt-holder';
+  stageFrame.appendChild(holder);
+  const start = function() {
+    if (!(window.YT && YT.Player)) return false;
+    window.ytPlayer = new YT.Player('yt-holder', {
+      videoId: song.id,
+      playerVars: { autoplay: 1, playsinline: 1, rel: 0, fs: 1, modestbranding: 1 },
+      events: {
+        onError: function() {
+          song.e = 0;
+          persistCurrent();
+          render();
+          openYouTube(song);
+        }
+      }
+    });
+    return true;
+  };
+  if (!start()) {
+    const iframe = document.createElement('iframe');
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('webkitallowfullscreen', '');
+    iframe.title = song.t;
+    iframe.src = 'https://www.youtube.com/embed/' + song.id + '?autoplay=1&playsinline=1&rel=0&fs=1';
+    stageFrame.innerHTML = '';
+    stageFrame.appendChild(iframe);
+  }
   document.querySelectorAll('.row.now').forEach(el => el.classList.remove('now'));
   const row = document.querySelector('.row[data-id="' + song.id + '"]');
   if (row) row.classList.add('now');
   syncTheater();
-  if (!document.body.classList.contains('theater')) {
-    stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
 }
 function openYouTube(song) {
   closePlayer();
@@ -462,6 +519,7 @@ async function loadPlaylistById(plid, name, via) {
     try { localStorage.setItem(STORE_DEFAULT, JSON.stringify({ plid: plid, name: labelName, songs: data.songs, at: Date.now() })); } catch (e) {}
   }
   setStatus((via ? via + ' · ' : '') + 'Loaded ' + data.songs.length + ' songs from ' + labelName + '.');
+  setPerform(true);
   enrichDescriptions(data.songs);
 }
 async function updateList() {
@@ -508,6 +566,9 @@ list.addEventListener('click', (e) => {
   else openYouTube(song);
 });
 document.getElementById('close').addEventListener('click', closePlayer);
+document.getElementById('setup-toggle').addEventListener('click', () => {
+  setPerform(!document.body.classList.contains('perform'));
+});
 document.getElementById('update').addEventListener('click', updateList);
 document.getElementById('make-default').addEventListener('click', makeDefault);
 document.getElementById('builtin').addEventListener('click', useBuiltin);
@@ -526,7 +587,7 @@ function setFilter() {
   render();
 }
 q.addEventListener('input', render);
-window.addEventListener('resize', syncTheater);
+window.addEventListener('resize', function(){ syncTheater(); if (document.body.classList.contains('playing')) markPlaying(); });
 window.addEventListener('orientationchange', () => setTimeout(syncTheater, 250));
 if (window.visualViewport) window.visualViewport.addEventListener('resize', syncTheater);
 
@@ -545,6 +606,7 @@ if (window.visualViewport) window.visualViewport.addEventListener('resize', sync
   }
   renderPicks();
   render();
+  setPerform(true);
 })();
 </script>
 </body>
