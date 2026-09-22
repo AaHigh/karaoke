@@ -218,6 +218,25 @@ def current_embed_map(html: str) -> dict[str, int]:
     return {row["id"]: int(row.get("e", 1)) for row in rows if "id" in row}
 
 
+def load_blocked(here: Path) -> dict:
+    path = here / "embed-blocked.json"
+    if not path.exists():
+        return {"ids": [], "notes": {}}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {"ids": [], "notes": {}}
+    data.setdefault("ids", [])
+    data.setdefault("notes", {})
+    return data
+
+
+def save_blocked(here: Path, data: dict) -> None:
+    (here / "embed-blocked.json").write_text(
+        json.dumps(data, indent=2) + "\n", encoding="utf-8"
+    )
+
+
 def oembed_ok(vid: str) -> bool:
     url = "https://www.youtube.com/oembed?format=json&url=" + urllib.parse.quote(
         "https://www.youtube.com/watch?v=" + vid
@@ -228,6 +247,73 @@ def oembed_ok(vid: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def playable_in_embed(vid: str) -> bool | None:
+    url = "https://www.youtube.com/watch?v=" + vid
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read().decode("utf-8", "replace")
+    except Exception:
+        return None
+    m = re.search(r'"playableInEmbed"\s*:\s*(true|false)', html)
+    if not m:
+        return None
+    return m.group(1) == "true"
+
+
+def verify_embed(vid: str, blocked: set[str]) -> tuple[int, str]:
+    if vid in blocked:
+        return 0, "blocked-list"
+    embedded = playable_in_embed(vid)
+    if embedded is False:
+        return 0, "playableInEmbed=false"
+    if embedded is True:
+        return 1, "playableInEmbed=true"
+    if oembed_ok(vid):
+        return 1, "oembed"
+    return 0, "oembed-fail"
+
+
+def write_embed_report(here: Path, rows: list[dict], old: dict[str, int], reasons: dict[str, str]) -> None:
+    changed_to_yt = []
+    changed_to_here = []
+    here_n = []
+    yt_n = []
+    for song in rows:
+        flag = int(song["e"])
+        prev = old.get(song["id"])
+        if flag:
+            here_n.append(song)
+        else:
+            yt_n.append(song)
+        if prev == 1 and flag == 0:
+            changed_to_yt.append(song)
+        if prev == 0 and flag == 1:
+            changed_to_here.append(song)
+    lines = [
+        "# embed-report",
+        f"HERE {len(here_n)}",
+        f"YT {len(yt_n)}",
+        f"wrong guess HERE -> YT {len(changed_to_yt)}",
+        f"now embeddable YT -> HERE {len(changed_to_here)}",
+        "",
+        "## wrong guesses (were HERE, verify said YT)",
+    ]
+    if not changed_to_yt:
+        lines.append("none")
+    for song in changed_to_yt:
+        lines.append(f"- {song['id']}  {reasons.get(song['id'], '')}  {song['t']}")
+    lines += ["", "## now embeddable"]
+    if not changed_to_here:
+        lines.append("none")
+    for song in changed_to_here:
+        lines.append(f"- {song['id']}  {reasons.get(song['id'], '')}  {song['t']}")
+    (here / "embed-report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("wrote embed-report.txt")
+    for song in changed_to_yt:
+        print("WRONG-GUESS", song["id"], song["t"][:60])
 
 
 def patch_html(html: str, songs: list[dict]) -> str:
@@ -295,15 +381,23 @@ def main() -> None:
 
     html = html_path.read_text(encoding="utf-8")
     old_embed = current_embed_map(html)
+    blocked_doc = load_blocked(here)
+    blocked = set(blocked_doc.get("ids") or [])
     title, rows = fetch_playlist(plid)
 
     out = []
+    reasons = {}
     for row in rows:
         if check_embed:
-            flag = 1 if oembed_ok(row["id"]) else 0
-            print(("HERE " if flag else "YT   ") + row["id"] + " " + row["t"][:50])
+            flag, why = verify_embed(row["id"], blocked)
+            reasons[row["id"]] = why
+            print(("HERE " if flag else "YT   ") + row["id"] + " " + why + " " + row["t"][:40])
+            if why == "playableInEmbed=false" and row["id"] not in blocked:
+                blocked.add(row["id"])
+                blocked_doc.setdefault("ids", []).append(row["id"])
+                blocked_doc.setdefault("notes", {})[row["id"]] = row["t"]
         else:
-            flag = old_embed.get(row["id"], 1)
+            flag = 0 if row["id"] in blocked else old_embed.get(row["id"], 1)
         out.append(
             {
                 "id": row["id"],
@@ -316,10 +410,15 @@ def main() -> None:
         )
 
     html_path.write_text(patch_html(html, out), encoding="utf-8")
+    save_blocked(here, blocked_doc)
     here_n = sum(s["e"] for s in out)
     print(f"wrote {len(out)} songs into {html_path}")
     print(f"playlist: {title} ({plid})")
     print(f"play-here flags kept or set: {here_n}")
+    if check_embed:
+        write_embed_report(here, out, old_embed, reasons)
+    else:
+        print("HERE/YT flags were copied, plus embed-blocked.json. Run ./update --embed to verify every song.")
     report_duplicates(here, out)
     print("open the new index.html. no Grok step.")
 
