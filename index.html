@@ -590,14 +590,14 @@ function showYtOnly(song) {
   openYt.href = 'https://www.youtube.com/watch?v=' + song.id;
   const box = document.createElement('div');
   box.className = 'yt-fallback';
-  box.innerHTML = '<p>YouTube blocked the embed for this one.</p><a href="https://www.youtube.com/watch?v=' + song.id + '">Open in YouTube</a>';
+  box.innerHTML = '<p>This one cannot play here. Marked YT for next time.</p><a href="https://www.youtube.com/watch?v=' + song.id + '">Open in YouTube</a>';
   stageFrame.appendChild(box);
   document.querySelectorAll('.row.now').forEach(el => el.classList.remove('now'));
   const row = document.querySelector('.row[data-id="' + song.id + '"]');
   if (row) row.classList.add('now');
 }
 function openYouTube(song) {
-  showYtOnly(song);
+  window.location.href = 'https://www.youtube.com/watch?v=' + song.id;
 }
 function render() {
   const rows = filtered();
