@@ -62,6 +62,10 @@
   figure.herofig img{width:100%;aspect-ratio:16/9;object-fit:cover}
   figcaption{font-family:var(--mono);font-size:.76rem;color:var(--muted);padding:12px 16px;line-height:1.5;border-top:1px solid var(--line)}
   figcaption b{color:var(--ink)}
+  .embed{position:relative;width:100%;aspect-ratio:16/9;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;margin-top:18px}
+  .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  figure.photo{margin:18px auto 0;max-width:460px;border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;background:var(--surface)}
+  figure.photo img{width:100%;display:block}
 
   .specstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:22px 0 0}
   .spec{background:var(--surface);padding:16px 16px 14px}
@@ -410,6 +414,16 @@
         <li><strong>No monitor dependency.</strong> Because the iRig is at the back end of the mix, its digital conversion delay does not matter here.</li>
         <li><strong>Still stereo where it counts:</strong> the VE-20 trick in §05 gives the voice width even in this mono phase.</li>
       </ul>
+
+      <div class="embed">
+        <iframe src="https://www.youtube.com/embed/84UPyth5X3w" title="Hotel California — first mono pass" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <p class="note" style="margin-top:10px">First pass — <b>Hotel California</b>, the first song in the set, recorded through the mono chain above, November 24, 2026. <a href="https://youtu.be/84UPyth5X3w?is=0VwXM3I0sU8wqF0f">Watch on YouTube</a></p>
+
+      <figure class="photo">
+        <img src="rig-cooler.jpg" alt="The Phase A rig in the Coleman cooler: Boss VE-20 vocal pedal, LiFePO4 100Ah battery, and the tip jar" />
+        <figcaption><b>The rig, as it sits.</b> Boss VE-20, LiFePO4 100Ah battery, and the tip jar — packed in the Coleman cooler, Tower District, November 24, 2026.</figcaption>
+      </figure>
     </div>
 
     <div class="card panel" id="p2" role="tabpanel">
