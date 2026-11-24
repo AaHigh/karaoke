@@ -66,6 +66,14 @@
   .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   figure.photo{margin:18px auto 0;max-width:460px;border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;background:var(--surface)}
   figure.photo img{width:100%;display:block}
+  .subhead{font-size:1.15rem;margin:28px 0 14px;letter-spacing:-.01em}
+  .media-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .media-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.media-grid,.media-grid3{grid-template-columns:1fr}}
+  .media-card{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .media-card.wide{grid-column:1 / -1}
+  .media-card img{width:100%;display:block}
+  .media-wide{margin:16px 0 0}
 
   .specstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:22px 0 0}
   .spec{background:var(--surface);padding:16px 16px 14px}
@@ -606,7 +614,50 @@
     <div class="legend"><span>✓ &nbsp;In the car / on hand</span><span>+ &nbsp;Part of the design — to add</span></div>
   </section>
 
-  <!-- 08 ROLLOUT -->
+  <!-- 08 FIRST NIGHT OUT -->
+
+  <section id="night-one">
+
+    <div class="sec-head">
+
+      <div class="sec-num">08</div>
+
+      <div>
+
+        <h2>First night out — November 24, 2026</h2>
+
+        <p>Phase A, as it happened. Fog on Olive Avenue after midnight, the rig on the sidewalk at Olive and Wishon, and the first mono pass — Hotel California — already recorded. Photos from the night are below, full quality, straight from the iPhone.</p>
+
+      </div>
+
+    </div>
+
+    <h3 class="subhead">Photos from the night</h3>
+
+    <div class="media-grid3">
+      <figure class="media-card">
+        <img src="box-stand.jpg" alt="SOUNDBOKS 4 on its stand above the cooler rig on a foggy sidewalk" />
+        <figcaption><b>The box and the cooler.</b> SOUNDBOKS 4 on its stand, the rig below it — VE-20, battery, tip jar.</figcaption>
+      </figure>
+      <figure class="media-card">
+        <img src="fog-olive.jpg" alt="Olive Avenue in fog at night, Tower Theatre marquee on the right" />
+        <figcaption><b>Olive Avenue in the fog.</b> The Tower Theatre marquee on the right, the street empty.</figcaption>
+      </figure>
+      <figure class="media-card">
+        <img src="fog-lights.jpg" alt="String lights over an empty foggy street at night" />
+        <figcaption><b>String lights over the empty street.</b> The District, quiet and fogged in.</figcaption>
+      </figure>
+    </div>
+
+    <figure class="media-card media-wide">
+      <img src="olive-wishon.jpg" alt="Olive and Wishon corner at night in fog, Tower Theatre and info kiosk" />
+      <figcaption><b>Olive and Wishon.</b> The corner where the rig sat — Tower Theatre, the info kiosk, green lights in the fog.</figcaption>
+    </figure>
+
+
+  </section>
+
+  <!-- 09 ROLLOUT -->
   <section id="rollout">
     <div class="callout">
       <p class="mono">Rollout — free first</p>
