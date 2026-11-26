@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Hearing Yourself: The DJI Mic Mini Monitoring Fix — High Tower District Stories</title>
+<meta name="description" content="The DJI Mic Mini has no headphone monitoring. Here's the wired workaround that works — the TRRS splitter chain, the iOS 'Headphones or Other Device' trap, and the silence test that proves your adapter has a mic input." />
+<link rel="canonical" href="https://stories.ahightower.com/dji-monitor/" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="High Tower District Stories" />
+<meta property="article:published_time" content="2026-11-25" />
+<meta property="article:author" content="Aaron Michael Hightower" />
+<meta property="og:title" content="Hearing Yourself: The DJI Mic Mini Monitoring Fix" />
+<meta property="og:description" content="Two wireless mics, one iPhone, and the headphone problem nobody warns you about — solved with a splitter, the right iOS setting, and a five-second silence test." />
+<meta property="og:url" content="https://stories.ahightower.com/dji-monitor/" />
+<meta property="og:image" content="https://stories.ahightower.com/dji-monitor/images/dji-receiver.jpg" />
+<meta property="og:image:secure_url" content="https://stories.ahightower.com/dji-monitor/images/dji-receiver.jpg" />
+<meta property="og:image:width" content="1179" />
+<meta property="og:image:height" content="1139" />
+<meta property="og:image:alt" content="The DJI Mic Mini receiver with its gain dial and 3.5mm OUT port, above the charging case, with two transmitters." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Hearing Yourself: The DJI Mic Mini Monitoring Fix" />
+<meta name="twitter:description" content="The DJI Mic Mini can't monitor. This wired chain can — plus the iOS prompt that silently kills your mic input if you answer it wrong." />
+<meta name="twitter:image" content="https://stories.ahightower.com/dji-monitor/images/dji-receiver.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f4ef; --surface:#ffffff; --surface2:#efece4; --ink:#1c2430; --ink2:#4a5568;
+    --line:#ddd6c8; --accent:#9a5b00; --accent-ink:#7c4a00; --good:#1d7a4f; --bad:#b3362b;
+    --code-bg:#20242c; --code-ink:#f3e9d2;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#12151b; --surface:#1a1f28; --surface2:#222834; --ink:#ece7db; --ink2:#aeb6c2;
+      --line:#333b49; --accent:#f0a832; --accent-ink:#f5bc55; --good:#4cc38a; --bad:#ff8a7a;
+      --code-bg:#0b0e13; --code-ink:#f3e9d2;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:17px;line-height:1.65}
+  button,[role="button"],a.btn,summary{min-height:44px}
+  .nav{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:860px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{font-family:"Playfair Display",serif;font-weight:800;font-size:19px;letter-spacing:.2px}
+  .brand span{color:var(--accent-ink)}
+  .nav a{color:var(--ink2);text-decoration:none;font-size:14px;font-weight:600;padding:10px 6px;display:inline-block}
+  .nav a:hover{color:var(--accent-ink)}
+  main{max-width:860px;margin:0 auto;padding:0 20px 64px}
+  .hero{padding:44px 0 8px}
+  .badge{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);border:1px solid var(--accent);border-radius:999px;padding:6px 14px}
+  h1{font-family:"Playfair Display",serif;font-size:clamp(34px,6vw,52px);line-height:1.08;margin:20px 0 14px;font-weight:800}
+  .sub{font-size:20px;color:var(--ink2);line-height:1.5;margin:0 0 8px;max-width:640px}
+  .byline{font-size:14px;color:var(--ink2);margin:14px 0 26px}
+  .hero-img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);display:block}
+  .portrait{max-width:420px;margin:24px auto}
+  figcaption{font-size:13.5px;color:var(--ink2);margin-top:8px}
+  h2{font-family:"Playfair Display",serif;font-size:29px;line-height:1.2;margin:52px 0 6px;font-weight:700}
+  h2 .no{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--accent-ink);display:block;letter-spacing:.08em;margin-bottom:6px}
+  h3{font-size:19px;margin:28px 0 6px}
+  p{margin:12px 0}
+  strong{font-weight:700}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0}
+  .card h3{margin-top:0}
+  .warn{border-color:var(--bad)}
+  .warn h3{color:var(--bad)}
+  .good h3{color:var(--good)}
+  ol.steps,ul.plain{padding-left:22px;margin:12px 0}
+  ol.steps li,ul.plain li{margin:10px 0}
+  .chain{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:20px 22px;margin:20px 0;font-family:"IBM Plex Mono",monospace;font-size:14.5px;line-height:1.9;overflow-wrap:anywhere}
+  .chain .arr{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:15.5px}
+  th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:700}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+  @media (max-width:640px){ .vs{grid-template-columns:1fr} }
+  .vs .card{margin:0}
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .tag.ok{color:var(--good)} .tag.no{color:var(--bad)}
+  .path{font-family:"IBM Plex Mono",monospace;font-size:14.5px;background:var(--surface2);border-radius:8px;padding:12px 14px;line-height:1.8;overflow-wrap:anywhere}
+  .checklist{list-style:none;padding:0;margin:16px 0}
+  .checklist li{padding:12px 14px 12px 44px;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:8px 0}
+  .checklist li::before{content:"✓";position:absolute;left:14px;top:11px;color:var(--good);font-weight:700;font-size:18px}
+  footer{border-top:1px solid var(--line);margin-top:56px;padding-top:22px;font-size:14px;color:var(--ink2)}
+  a{color:var(--accent-ink)}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-in">
+  <div class="brand">High Tower <span>District</span></div>
+  <div><a href="#the-fix">The Fix</a><a href="#the-prompt">The Prompt</a><a href="#the-test">The Test</a><a href="#checklist">Checklist</a></div>
+</div></nav>
+<main>
+  <header class="hero">
+    <span class="badge">Car Karaoke Rig · Tower District, Fresno</span>
+    <h1>Hearing Yourself: The DJI Mic Mini Monitoring Fix</h1>
+    <p class="sub">Two wireless mics, one iPhone, and the headphone problem nobody warns you about.</p>
+    <p class="byline">By Aaron Michael Hightower · Wednesday, November 25, 2026</p>
+    <figure style="margin:0">
+      <img class="hero-img" src="images/dji-receiver.jpg" alt="The DJI Mic Mini receiver with its gain dial and 3.5mm OUT port, above the charging case, with two transmitters." width="1179" height="1139" />
+      <figcaption><b>The receiver is the whole story.</b> Gain dial on the left, 3.5mm OUT port on the side, two transmitters above the charging case. The voice comes out of that orange-ringed port — and nothing comes back in. Product photo from the DJI Mic Mini listing.</figcaption>
+    </figure>
+  </header>
+
+  <p>I run karaoke out of my car in the Tower District. Two DJI Mic Mini sets, an iPhone 16 Pro, and Smule. The mics sound great. The problem was never the mics. The problem was hearing myself.</p>
+  <p>The DJI Mic Mini does not do monitoring. That is not a setting I missed — DJI says so outright. And the little receiver has a 3.5mm jack on it that I assumed for a long time was for headphones. It is not. That jack is the analog <strong>output</strong>: mic-level voice, meant to feed a camera. It only carries your voice, and the phone's audio never comes back through it. Everything in this story follows from that one fact.</p>
+
+  <h2><span class="no">01</span>What does not work</h2>
+  <p>So you don't waste your time and money the way I almost did:</p>
+  <div class="card">
+    <h3>Headphones in the receiver's jack</h3>
+    <p>That jack is a camera output, not a headphone output. You would hear voice only — no backing track — because the receiver never receives the phone's playback in the first place.</p>
+    <h3>Wireless headphones</h3>
+    <p>DJI cannot send audio to Bluetooth headphones. Even routing through the phone, Bluetooth adds roughly 150–250 milliseconds of delay: you hear the track late, sing behind the beat, and the recording comes out out of sync. Smule does not support Bluetooth headsets either, for the same reason.</p>
+    <h3>Apple's wired USB-C EarPods</h3>
+    <p>They have a DAC chip inside them. The DJI's analog side needs a purely analog device with no chip — and the EarPods would need the phone's one USB-C port anyway.</p>
+    <h3>The passive-adapter shortcut</h3>
+    <p>There is a passive adapter, the Sanoxy USB-C to 3.5mm, that Allan T&eacute;pper at ProVideo Coalition got working — but only with DJI's tiny Mobile receiver, not the standard receiver in the Mic Mini kit. Even then he reported poor sound with noticeable delay, and Target's reviews for it sit at 1.8 out of 5. I am not buying it.</p>
+  </div>
+
+  <h2 id="the-fix"><span class="no">02</span>The wiring that works</h2>
+  <p>The receiver works fine standing alone — it has its own battery, about six hours, and it puts out your voice as analog audio from that 3.5mm jack. So stop trying to plug the receiver into the phone. Let it stand alone, and bring its voice to the phone the analog way, through a headset splitter.</p>
+  <p>You need one piece of wiring that matters: a <strong>Y-splitter</strong> that breaks a single TRRS plug into two separate jacks — one for headphones, one for the microphone. That is the piece that routes the DJI's voice onto the phone's mic contact while your headphones take the phone's output. It has to be <strong>CTIA</strong> wiring, the iPhone standard.</p>
+  <figure class="portrait">
+    <img class="hero-img" src="images/splitter-compat.jpg" alt="SOLMIMI headset adapter compatibility diagram: CTIA TRRS male plug, TRS Mic female jack, TRS Audio female jack." width="1179" height="1389" />
+    <figcaption><b>The splitter, diagrammed.</b> The SOLMIMI headset adapter: one CTIA TRRS male plug, and two female jacks — TRS Mic and TRS Audio. It works with a smartphone, a tablet, a laptop, a PS4, an Xbox, or an MP3 player. Product photo from the Amazon listing.</figcaption>
+  </figure>
+  <figure class="portrait">
+    <img class="hero-img" src="images/ugreen-splitter.jpg" alt="UGREEN headphone splitter: one TRRS male plug, one female mic jack marked with a microphone icon, one female audio jack marked with a headphone icon." width="1179" height="1653" />
+    <figcaption><b>The same part, from UGREEN.</b> One TRRS male plug, a female mic jack marked with a microphone icon, a female audio jack marked with a headphone icon. Same wiring, different brand. Product photo from the Amazon listing.</figcaption>
+  </figure>
+  <p>Two brands make this exact part — the SOLMIMI and the UGREEN in the photos above — and either one does the job, because the wiring is the standard, not the brand.</p>
+  <div class="chain">
+    DJI receiver (own battery, Mono mode)<br />
+    <span class="arr">→</span> 3.5mm OUT, TRS-to-TRS cable from the case<br />
+    <span class="arr">→</span> MIC jack of the Y-splitter<br />
+    Headphones <span class="arr">→</span> HEADPHONE jack of the Y-splitter<br />
+    Y-splitter TRRS plug <span class="arr">→</span> USB-C to 3.5mm adapter<br />
+    <span class="arr">→</span> iPhone
+  </div>
+  <ol class="steps">
+    <li><strong>Power the receiver from its own battery</strong> (or a power bank). Do not plug it into the phone's USB-C port. The phone only has one port, and the adapter is using it — and if the phone sees the DJI as a USB mic, it takes that digital input and ignores everything else. The phone still charges, because the Criello adapter hands a PD charging port back — see step 5.</li>
+    <li><strong>Set the receiver to Mono mode.</strong> The mic input is mono and the voice rides on the <em>tip</em> of the plug. In Mono, the full mix is on the tip. In Stereo mode, the tip is only the first transmitter — you'd lose the second mic.</li>
+    <li><strong>Run the TRS-to-TRS cable</strong> from the receiver's 3.5mm OUT into the mic jack of the Y-splitter. A note from opening my own case: there is <strong>no TRS-to-TRRS adapter in the DJI kit</strong>, whatever a retail listing claims. The case holds the TRS-to-TRS camera cable — and that cable is all you need, because the Y-splitter's mic jack is where the voice belongs.</li>
+    <li><strong>Headphones into the headphone jack</strong> of the Y-splitter. Plain wired headphones — analog, no DAC chip.</li>
+    <li><strong>Splitter into the adapter, adapter into the phone.</strong> The last link is the Criello 2-in-1 USB-C adapter Amazon delivered today (more on that delivery below). Its 3.5mm jack is TRRS, mic input included — proven, not assumed. See <a href="#the-test">the silence test</a>. And its second USB-C port is a PD 60W charger, so the phone charges while the audio runs.</li>
+    <li><strong>Set your level with the gain dial on the receiver.</strong> Start low and test. If it distorts, turn it down.</li>
+  </ol>
+  <figure class="portrait">
+    <img class="hero-img" src="images/dji-box.jpg" alt="What's in the DJI Mic Mini box: two transmitters, charging case, camera audio cable (3.5mm TRS), mobile phone adapter, USB-C charging cable, windscreens, receiver, clip magnets, carrying pouch." width="1179" height="1313" />
+    <figcaption><b>What's in the box — and what isn't.</b> Two transmitters, the charging case, the receiver, and one 3.5mm cable: the Camera Audio Cable, TRS. There is no TRS-to-TRRS adapter in the kit. The only cable that fits the mic jack is the one DJI already gave you. Product photo from the DJI Mic Mini listing.</figcaption>
+  </figure>
+  <p>What you get: the backing track in your headphones, your own voice in your headphones at a level you control, and a recording with your voice only — clean, no track bleeding into the mic. The phone is simply treating the DJI like a wired headset mic.</p>
+  <figure class="portrait">
+    <img class="hero-img" src="images/splitter-headset.jpg" alt="The SOLMIMI headset adapter in use: a phone playing music, a gaming headset plugged into the splitter's two jacks." width="1179" height="1405" />
+    <figcaption><b>The splitter in use.</b> One combo jack from the phone becomes two plugs: the headset's mic and its headphones. The listing's own warning is worth reading: this connects one combo-jack device to one dual-TRS-plug headset — not to two headphones. Product photo from the Amazon listing.</figcaption>
+  </figure>
+
+  <h3>Why the contacts matter: TRS vs. TRRS</h3>
+  <p>A headphone plug is a row of contacts, and which contact your voice lands on decides everything:</p>
+  <table>
+    <tr><th>Contact</th><th>On a TRRS headset plug</th></tr>
+    <tr><td>Tip</td><td>Headphone out — left</td></tr>
+    <tr><td>Ring 1</td><td>Headphone out — right</td></tr>
+    <tr><td>Ring 2</td><td>Ground</td></tr>
+    <tr><td>Sleeve</td><td><strong>Microphone in</strong></td></tr>
+  </table>
+  <p>The DJI's plug is TRS, so its voice sits on the tip. That is exactly why the Y-splitter is not optional: it is the piece that takes the voice off the DJI cable and puts it onto the mic contact of the phone's TRRS connection.</p>
+  <figure class="portrait">
+    <img class="hero-img" src="images/splitter-laptop.jpg" alt="The SOLMIMI splitter with a laptop and a speaker microphone: a diagram shows the female jacks accept TRS plugs only, not TS or TRRS." width="1179" height="1436" />
+    <figcaption><b>TRS only.</b> The splitter's own diagram: its female jacks take a TRS plug — green check. TS gets a red cross, TRRS gets a red cross. The DJI's TRS camera cable is exactly what fits the mic jack, and a TRRS plug does not belong in it. Product photo from the Amazon listing.</figcaption>
+  </figure>
+
+  <div class="card warn">
+    <h3>The test you must not run</h3>
+    <p>It is tempting, when the Y-splitter is at home and the adapter is in your hand, to plug the DJI receiver's output straight into the adapter's jack and see what happens. Don't. The DJI's TRS tip — where the voice lives — would land on the phone's <em>headphone output</em> contacts, and the mic contact would get nothing but the DJI's ground. Two outputs connected to each other: the phone's headphone amp pushing back into the DJI's output stage.</p>
+    <p>It almost certainly wouldn't break anything — both sides are protected against shorts — but it cannot test the mic, either. The phone would record silence, and you'd walk away thinking the mic doesn't work when the wiring was the problem. The right test needs no DJI at all. It's in <a href="#the-test">section 04</a>.</p>
+  </div>
+
+  <h2 id="the-prompt"><span class="no">03</span>“Headphones, or another device?”</h2>
+  <p>The first time you plug a USB-C to 3.5mm adapter into an iPhone, iOS asks a question: is this headphones, or another device? It is part of Headphone Safety, around since iOS 14. It asks <strong>once per adapter, per phone</strong>, and it remembers your answer. I have two phones. On one I chose Headphones. On the other I chose Other Device. That one tap turned out to matter more than any cable in the chain.</p>
+  <div class="vs">
+    <div class="card good">
+      <p class="tag ok">Pick this one</p>
+      <h3>Headphones</h3>
+      <p>iOS treats the adapter as a headset. <strong>The mic input stays live</strong>, so the DJI voice coming in through the TRRS mic contact passes through to the phone. The trade-off is volume: iOS caps the output at about 4.5 dB below full, and the loud-sound protections apply. That is the safe-listening limit — a fair price for a working mic.</p>
+    </div>
+    <div class="card warn">
+      <p class="tag no">The trap</p>
+      <h3>Other Device</h3>
+      <p>iOS treats the adapter as an external speaker or amp. You get full volume, no cap — but <strong>the mic input does not come through</strong>. The adapter is treated as output only, so the phone hears nothing from the mic side and falls back to its own built-in mic. The track plays nice and loud, and the whole setup is defeated.</p>
+    </div>
+  </div>
+  <p>So the phone where I picked Headphones is the right phone for this rig. The other one is fixable, without buying anything:</p>
+  <ol class="steps">
+    <li>Open <strong>Settings → Sounds &amp; Haptics → Headphone Safety → USB Audio Accessories</strong>.</li>
+    <li>Turn on <strong>Connected To Headphones</strong>. That flips the adapter to the headset treatment — mic live.</li>
+    <li>If that entry isn't there, tap <strong>Forget All USB Audio Accessories</strong> on the same screen, plug the adapter back in, and choose <strong>Headphones</strong> when it asks again.</li>
+  </ol>
+
+  <h2 id="the-test"><span class="no">04</span>The silence test</h2>
+  <p>Plenty of cheap USB-C adapters are output only — no mic channel at all, whatever the listing says. Before trusting the adapter Amazon delivered today, I tested it with nothing but the phone:</p>
+  <ol class="steps">
+    <li>Plug the adapter in, with <strong>nothing</strong> in its 3.5mm jack.</li>
+    <li>Open Voice Memos and record about five seconds while talking.</li>
+    <li>Record the same thing once with the adapter unplugged, to compare.</li>
+  </ol>
+  <p>My recording with the adapter plugged in was <strong>silent</strong> — and the silence is the proof. If the adapter had no mic input, the phone would have kept its own built-in mic and my voice would be on the recording, clear as the unplugged take. Instead the phone switched its input over to the adapter's mic channel, and with nothing plugged in, that channel was open. Silent with it in, voice with it out, means <strong>TRRS with a working mic input</strong>. The adapter is good, and the plan holds.</p>
+
+  <div class="card">
+    <h3>About today's delivery</h3>
+    <p>The adapter is the <strong>Criello Magnetic USB-C to 3.5mm Audio Adapter and Charger</strong> — a 2-in-1: one USB-C plug into the phone, a 3.5mm audio jack, and a second USB-C port that charges the phone at PD 60W while the audio runs. Amazon's Choice, 300+ bought in the past month, 4.3 stars. It arrived in today's Amazon delivery, order #112-1830644-7663401, three items left near the front door: one household-supplies item and two electronics. Amazon's order emails list categories only, so the name and the photos here come from the product listing itself, and the mic channel is proven by the silence test above: USB-C in, TRRS out, mic channel live, phone charging.</p>
+  </div>
+  <figure class="portrait">
+    <img class="hero-img" src="images/criello-product.jpg" alt="The Criello 2-in-1 USB-C adapter: one USB-C plug for the phone, a 3.5mm audio jack, and a second USB-C port for PD charging." width="1179" height="1673" />
+    <figcaption><b>One port in, two jobs out.</b> The Criello adapter: USB-C into the phone, a 3.5mm audio jack marked Audio, and a second USB-C port marked PD for 60W charging. Product photo from the Amazon listing.</figcaption>
+  </figure>
+  <figure class="portrait">
+    <img class="hero-img" src="images/criello-dac.jpg" alt="Cutaway of the Criello adapter showing the DAC chip in the USB-C plug and the PD 60W charging chip." width="1179" height="1615" />
+    <figcaption><b>Smart chips inside.</b> The listing's cutaway shows a DAC chip in the adapter — this is an active adapter, not a passive one — and a PD 60W charging chip. The DAC is what converts the phone's digital audio to analog for the 3.5mm jack, and the mic signal back the other way. Product photo from the Amazon listing.</figcaption>
+  </figure>
+
+  <h2><span class="no">05</span>In Smule, close the loop</h2>
+  <p>The wiring gets the DJI's voice into the phone. Smule is what puts your voice back in your ears:</p>
+  <ol class="steps">
+    <li>On the recording screen, tap <strong>Audio Settings</strong>.</li>
+    <li>Under <strong>Microphone Input</strong>, pick <strong>Headset Microphone</strong>. That is your DJI feed, arriving through the TRRS mic input.</li>
+    <li>Set the <strong>Your Voice</strong> slider to how loud you want to hear yourself in the headphones. That slider only changes what you hear — not the recording.</li>
+  </ol>
+  <p>One honest caveat: the “you hear yourself” part is Smule closing the loop. In a plain recording app like Camera, this same chain records the DJI voice cleanly but doesn't play it back to you live.</p>
+
+  <h2><span class="no">06</span>The buy-your-way-out option</h2>
+  <p>If you want the problem solved with money instead of wiring, the step-up model is the <strong>DJI Mic 2</strong>. Its receiver has a separate, dedicated 3.5mm headphone monitoring port, and DJI officially supports monitoring on it, with the volume adjustable on the receiver's screen. It also plays the phone's audio back without unplugging the receiver, and it charges the phone and the receiver through its USB-C port while you record. It lists at $349 and is $199 right now. That is the mic for people who want monitoring built in instead of wired around it.</p>
+  <p>I already own two Mic Minis, so the wiring fix is the one I'm using. It works, it costs nothing extra, and it took an evening of wrong turns to find. Now you don't have to take those turns.</p>
+
+  <h2 id="checklist"><span class="no">07</span>The whole rig, on one checklist</h2>
+  <ul class="checklist">
+    <li>Receiver on its own battery — never plugged into the phone</li>
+    <li>Receiver in Mono mode, gain starting low</li>
+    <li>TRS-to-TRS cable: receiver OUT → mic jack of the CTIA Y-splitter</li>
+    <li>Wired headphones → headphone jack of the Y-splitter</li>
+    <li>Y-splitter → Criello USB-C adapter → phone, with the adapter's PD port charging the phone</li>
+    <li>That phone answered “Headphones” at the iOS prompt — or was fixed in Headphone Safety settings</li>
+    <li>Adapter passed the silence test: silent recording, nothing plugged in</li>
+    <li>Smule: Microphone Input = Headset Microphone; Your Voice slider set to taste</li>
+    <li>Never plug the DJI output straight into the adapter's jack to “test” it</li>
+  </ul>
+
+  <h2>Sources</h2>
+  <ol>
+    <li><a href="https://support.dji.com/help/content?customId=01700009945&amp;spaceId=17&amp;re=US&amp;lang=en&amp;documentType&amp;paperDocType=ARTICLE" target="_blank" rel="noopener">DJI Support — &ldquo;How can I connect DJI Mic series receivers to mobile devices, cameras, and computers?&rdquo;</a> — DJI&rsquo;s own documentation of the splitter route: with a single 3.5mm combo jack, connect a 3.5mm splitter to separate mic and headphone connections, then a cable from the receiver&rsquo;s output port to the mic input on the splitter.</li>
+    <li><a href="https://www.provideocoalition.com/dji-mic-mini-2-tx-1-mobile-rx-live-monitoring-adventure-for-complete-audio-confidence/" target="_blank" rel="noopener">Allan T&eacute;pper, ProVideo Coalition — &ldquo;DJI Mic Mini (2 TX + 1 Mobile RX) live monitoring adventure for complete audio confidence!&rdquo;</a> — Monitoring from the tiny Mobile Receiver works only through a purely analog USB-C adapter with no DAC or ADC. The Sanoxy passive adapter from Target is the one he found; he reports poor sound quality and substantial latency, and his test was on Android.</li>
+    <li><a href="https://smule.zendesk.com/hc/en-us/articles/47620554762900-Microphone-Input-Selector-for-iOS" target="_blank" rel="noopener">Smule — &ldquo;Microphone Input Selector for iOS&rdquo;</a> — When wired headphones are plugged in, Smule shows a Microphone Input selector above the &ldquo;Your Voice&rdquo; slider. Choose Headset Microphone to record from the wired feed. Bluetooth headsets are not supported by this feature.</li>
+    <li><a href="https://www.target.com/p/sanoxy-usb-c-type-c-to-3-5mm-aux-audio-jack-passive-headphone-adapter-nylon-braided-black-silver/-/A-90975984" target="_blank" rel="noopener">Sanoxy USB-C to 3.5mm Passive Headphone Adapter, Target</a> — $14.99 at Target, rated 1.8 out of 5, with reviews saying it does not work plugged straight into an iPhone. Only useful with the Mobile Receiver, not the standard receiver.</li>
+    <li>DJI Mic 2 pricing — DJI US store, November 25, 2026. 2 TX + 1 RX + charging case, $199 (list $349); 1 TX + 1 RX, $129. The receiver&rsquo;s dedicated black 3.5mm headphone monitoring port is the feature the Mini lacks.</li>
+  </ol>
+
+  <footer>
+    <p>High Tower District — Fresno, California. Part of the car-studio karaoke build: verified skill, wired right, nothing bought twice.</p>
+  </footer>
+</main>
+</body>
+</html>
